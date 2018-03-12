@@ -11,8 +11,7 @@
   }
 })();
 
-class PnklForebruary extends HTMLElement {
-
+class PnklForebruary extends HTMLElement { 
   constructor() {
     super();
     let shadowRoot = this.attachShadow({mode: 'open'});
@@ -22,18 +21,21 @@ class PnklForebruary extends HTMLElement {
     this._date = '';
     this.shadowRoot.innerHTML = `
       <style>
+        .wrapper {
+          margin: 20px;
+        }
         .wrapper-table {
           position: relative;
           margin: 30px 0 0 0;
           padding: 0;
         }
         td {
-          width: 65px;
+          width: 60px;
           height: 55px;
           text-align: center;
           color: #333333;
           font-family: 'Helvetica Neue', sans-serif;
-          font-size: 24px;
+          font-size: 30px;
           font-weight: bold;
           border-radius: 5px;
           transition: background-color .3s;
@@ -51,9 +53,9 @@ class PnklForebruary extends HTMLElement {
         .overflow-table {
           cursor: pointer;
           top: -21px;
-          left: 174px;
+          left: -31px;
           position: absolute;
-          padding: 168px 243px;
+          padding: 168px 248px;
           z-index: 10;
           border: 28px solid #FAFAFA;
           transition: left 0.5s;
@@ -72,7 +74,7 @@ class PnklForebruary extends HTMLElement {
           color: white;
         }
       </style>
-      <div>
+      <div class="wrapper">
         <select class="month">
           <option>January</option>
           <option>February</option>
@@ -143,7 +145,7 @@ class PnklForebruary extends HTMLElement {
         
         <div class="wrapper-table">
           <table>
-            <tr><td colspan="6"></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+            <tr><td colspan="6" id="disabledTD"></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
             <tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td></tr>
             <tr><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td></tr>
             <tr><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td></tr>
@@ -155,6 +157,17 @@ class PnklForebruary extends HTMLElement {
         </div>
       </div>
     `;
+    this.shadowRoot.querySelector('.month').addEventListener('change', (event) => {
+      if (event.target.value !== this.month) {
+        this.month = event.target.value;
+      }
+    });
+    // I USED IT HERE BECAUSE I CAN'T ENCAPSULATE EVENT HANDLERS IN THEIR OWN FUNCTION BECAUSE I'M MISSING THIS KEYWORD IN THIS SITUATION. XD
+    this.shadowRoot.querySelector('.year').addEventListener('change', (event) => {
+      if (event.target.value !== this.year) {
+        this.year = event.target.value;
+      }
+    });
   }
   get month() {
     return this._month;
@@ -193,6 +206,9 @@ class PnklForebruary extends HTMLElement {
         this.changeSelectedYear(newVal);
         this.rotateOverflowFrame();
         break;
+      case 'date':
+        this._date = newVal;
+        break;
     }
   }
   getCoords(elem) {
@@ -221,16 +237,18 @@ class PnklForebruary extends HTMLElement {
   }
   connectedCallback() {
     this.checkTdsInFrame();
-    this.changeSelectedYear();
   }
   checkTdsInFrame() {
     const overflowDiv = this.shadowRoot.querySelector('.overflow-table');
     const overflowPos = this.getCoords(overflowDiv);
+    console.log('check',overflowPos);
     let tds = this.shadowRoot.querySelectorAll('td');
     Array.prototype.forEach.call(tds, (elem, index) => {
       const tdPos = this.getCoords(elem);
       if ((parseInt(tdPos.left) >= parseInt(overflowPos.left)) && (parseInt(tdPos.left) <= parseInt(overflowPos.left) + 514)) { // detecting elements, which are inside of that overflowBox on x coordinate
-        elem.classList.add('isInTheMonth');
+        if (elem.getAttribute('id') !== 'disabledTD') {
+          elem.classList.add('isInTheMonth');
+        }
       } else {
         if (elem.classList.contains('isInTheMonth')) {
           elem.classList.remove('isInTheMonth');
@@ -258,13 +276,14 @@ class PnklForebruary extends HTMLElement {
 
   rotateOverflowFrame() {
     let day;
-    let date = new Date(this.year, this.monthArray.indexOf(this.month)+1, 1);
-    console.log(this.date);
-    console.log(date);
-    if (this.date !== date) {
+    const date = new Date(this.year, this.monthArray.indexOf(this.month)+1, 1);
+    const overflowDiv = this.shadowRoot.querySelector('.overflow-table');
+    if (this.date !== date && this.year && this.month) {
       this.date = date;
-      day = date.getDay();
+      day = date.getDay(); // 1 should have 'day' offset
       console.log(day);
+      overflowDiv.style.left = (-15 + (day)*35) + 'px';
+      this.checkTdsInFrame();
     }
   }
 }
