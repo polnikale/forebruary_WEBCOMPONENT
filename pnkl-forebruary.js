@@ -17,7 +17,9 @@ class PnklForebruary extends HTMLElement {
     super();
     let shadowRoot = this.attachShadow({mode: 'open'});
     this._month = '';
+    this.monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'December'];
     this._year = '';
+    this._date = '';
     this.shadowRoot.innerHTML = `
       <style>
         .wrapper-table {
@@ -71,7 +73,6 @@ class PnklForebruary extends HTMLElement {
         }
       </style>
       <div>
-        ${this.month} - ${this.year}
         <select class="month">
           <option>January</option>
           <option>February</option>
@@ -85,6 +86,59 @@ class PnklForebruary extends HTMLElement {
           <option>October</option>
           <option>November</option>
           <option>December</option>
+        </select>
+        <select class="year">
+          <option>1988</option>
+          <option>1989</option>
+          <option>1990</option>
+          <option>1991</option>
+          <option>1992</option>
+          <option>1993</option>
+          <option>1994</option>
+          <option>1995</option>
+          <option>1996</option>
+          <option>1997</option>
+          <option>1998</option>
+          <option>1999</option>
+          <option>2000</option>
+          <option>2001</option>
+          <option>2002</option>
+          <option>2003</option>
+          <option>2004</option>
+          <option>2005</option>
+          <option>2006</option>
+          <option>2007</option>
+          <option>2008</option>
+          <option>2009</option>
+          <option>2010</option>
+          <option>2011</option>
+          <option>2012</option>
+          <option>2013</option>
+          <option>2014</option>
+          <option>2015</option>
+          <option>2016</option>
+          <option>2017</option>
+          <option>2018</option>
+          <option>2019</option>
+          <option>2020</option>
+          <option>2021</option>
+          <option>2022</option>
+          <option>2023</option>
+          <option>2024</option>
+          <option>2025</option>
+          <option>2026</option>
+          <option>2027</option>
+          <option>2028</option>
+          <option>2029</option>
+          <option>2030</option>
+          <option>2031</option>
+          <option>2032</option>
+          <option>2033</option>
+          <option>2034</option>
+          <option>2035</option>
+          <option>2036</option>
+          <option>2037</option>
+          <option>2038</option>
         </select>
         
         <div class="wrapper-table">
@@ -116,8 +170,15 @@ class PnklForebruary extends HTMLElement {
     this.setAttribute('year', value);
   }
 
+  get date() {
+    return this._date;
+  }
+  set date(value) {
+    this.setAttribute('date', value);
+  }
+
   static get observedAttributes() {
-    return ['month', 'year'];
+    return ['month', 'year', 'date'];
   }
 
   attributeChangedCallback(name, oldval, newVal) {
@@ -125,10 +186,12 @@ class PnklForebruary extends HTMLElement {
       case 'month':
         this._month = newVal;
         this.changeSelectedMonth(newVal);
+        this.rotateOverflowFrame();
         break;
       case 'year':
         this._year = newVal;
         this.changeSelectedYear(newVal);
+        this.rotateOverflowFrame();
         break;
     }
   }
@@ -158,7 +221,6 @@ class PnklForebruary extends HTMLElement {
   }
   connectedCallback() {
     this.checkTdsInFrame();
-    this.changeSelectedMonth();
     this.changeSelectedYear();
   }
   checkTdsInFrame() {
@@ -178,7 +240,6 @@ class PnklForebruary extends HTMLElement {
   }
   changeSelectedMonth() {
     let options = this.shadowRoot.querySelectorAll('.month option');
-    console.log(options);
     Array.prototype.forEach.call(options, (elem, index) => {
       if (elem.textContent === this.month) {
         elem.parentNode.selectedIndex = index;
@@ -186,7 +247,26 @@ class PnklForebruary extends HTMLElement {
       } 
     });
   }
-  changeSelectedYear() {}
+  changeSelectedYear() {
+    let options = this.shadowRoot.querySelectorAll('.year option');
+    Array.prototype.forEach.call(options, (elem, index) => {
+      if (elem.textContent === this.year) {
+        elem.parentNode.selectedIndex = index;
+      } 
+    });
+  }
+
+  rotateOverflowFrame() {
+    let day;
+    let date = new Date(this.year, this.monthArray.indexOf(this.month)+1, 1);
+    console.log(this.date);
+    console.log(date);
+    if (this.date !== date) {
+      this.date = date;
+      day = date.getDay();
+      console.log(day);
+    }
+  }
 }
 
 customElements.define('pnkl-forebruary', PnklForebruary);
