@@ -276,7 +276,7 @@ class PnklForebruary extends HTMLElement {
     let tds = this.shadowRoot.querySelectorAll('td');
     Array.prototype.forEach.call(tds, (elem, index) => {
       const tdPos = this.getCoords(elem);
-      if ((parseInt(tdPos.left) >= parseInt(overflowPos.left)) && (parseInt(tdPos.left) <= parseInt(overflowPos.left) + 450)) { // detecting elements, which are inside of that overflowBox on x coordinate
+      if ((parseInt(tdPos.left) >= parseInt(overflowPos.left)) && (parseInt(tdPos.left) <= parseInt(overflowPos.left) + 420)) { // detecting elements, which are inside of that overflowBox on x coordinate
         if (elem.getAttribute('id') !== 'disabledTD') {
           elem.classList.add('isInTheMonth');
         }
