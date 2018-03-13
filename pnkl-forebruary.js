@@ -57,7 +57,7 @@ class PnklForebruary extends HTMLElement {
           top: -21px;
           left: -31px;
           position: absolute;
-          padding: 168px 248px;
+          padding: 168px 223px;
           z-index: 10;
           border: 28px solid #FAFAFA;
           transition: left 0.5s;
@@ -112,14 +112,18 @@ class PnklForebruary extends HTMLElement {
       const overflowFrame = this.shadowRoot.querySelector('.overflow-table');
       const overflowFrameLeftPos = parseInt(overflowFrame.style.left);
       for (let i = 0; i < 63; i++) {
-        if ((overflowFrameLeftPos -i)%64 === 0) {
+        if (((overflowFrameLeftPos -i)%64 === 0) && overflowFrameLeftPos -i >= 0) {
           overflowFrame.style.left = overflowFrameLeftPos - i -14 + 'px';
-          console.log(overflowFrame.style.left);
+          this.findMonthAndYear();
+          this.checkTdsInFrame();
           break;
-        } else if ((overflowFrameLeftPos + i)%64 === 0) {
+        } else if (((overflowFrameLeftPos + i)%64 === 0) && overflowFrameLeftPos -i >= 0) {
           overflowFrame.style.left = overflowFrameLeftPos + i -14 + 'px';
-          console.log(overflowFrame.style.left);
+          this.findMonthAndYear();
+          this.checkTdsInFrame();
           break;
+        } else {
+          
         }
         // -14 is default offset
       }
@@ -217,6 +221,10 @@ class PnklForebruary extends HTMLElement {
         break;
     }
   }
+  connectedCallback() {
+    this.changeYearSelect();
+  }
+
   getCoords(elem) {
     // (1)
     var box = elem.getBoundingClientRect();
@@ -240,9 +248,6 @@ class PnklForebruary extends HTMLElement {
       top: top,
       left: left
     };
-  }
-  connectedCallback() {
-    this.changeYearSelect();
   }
   checkTdsInFrame() {
     const overflowDiv = this.shadowRoot.querySelector('.overflow-table');
@@ -309,9 +314,16 @@ class PnklForebruary extends HTMLElement {
       this.date = date;
       day = date.getDay(); // 1 should have 'day' offset
       console.log(day);
-      overflowDiv.style.left = (-14 + (day-1)*64) + 'px';
+      overflowDiv.style.left = (-14 + (day)*64) + 'px';
       this.checkTdsInFrame();
     }
+  }
+
+  findMonthAndYear() {
+    let overflowFrame = this.shadowRoot.querySelector('.overflow-table');
+    let overflowFramePosLeft = parseInt(overflowFrame.style.left);
+    let firstDayIndex = Math.floor((overflowFramePosLeft + 14) / 64);
+    console.log('index', firstDayIndex);
   }
 }
 
