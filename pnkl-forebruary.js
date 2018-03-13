@@ -18,6 +18,8 @@ class PnklForebruary extends HTMLElement {
     this._month = '';
     this.monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'December'];
     this._year = '';
+    this._yearBegin = '';
+    this._yearEnd = '';
     this._date = '';
     this.shadowRoot.innerHTML = `
       <style>
@@ -90,57 +92,6 @@ class PnklForebruary extends HTMLElement {
           <option>December</option>
         </select>
         <select class="year">
-          <option>1988</option>
-          <option>1989</option>
-          <option>1990</option>
-          <option>1991</option>
-          <option>1992</option>
-          <option>1993</option>
-          <option>1994</option>
-          <option>1995</option>
-          <option>1996</option>
-          <option>1997</option>
-          <option>1998</option>
-          <option>1999</option>
-          <option>2000</option>
-          <option>2001</option>
-          <option>2002</option>
-          <option>2003</option>
-          <option>2004</option>
-          <option>2005</option>
-          <option>2006</option>
-          <option>2007</option>
-          <option>2008</option>
-          <option>2009</option>
-          <option>2010</option>
-          <option>2011</option>
-          <option>2012</option>
-          <option>2013</option>
-          <option>2014</option>
-          <option>2015</option>
-          <option>2016</option>
-          <option>2017</option>
-          <option>2018</option>
-          <option>2019</option>
-          <option>2020</option>
-          <option>2021</option>
-          <option>2022</option>
-          <option>2023</option>
-          <option>2024</option>
-          <option>2025</option>
-          <option>2026</option>
-          <option>2027</option>
-          <option>2028</option>
-          <option>2029</option>
-          <option>2030</option>
-          <option>2031</option>
-          <option>2032</option>
-          <option>2033</option>
-          <option>2034</option>
-          <option>2035</option>
-          <option>2036</option>
-          <option>2037</option>
-          <option>2038</option>
         </select>
         
         <div class="wrapper-table">
@@ -157,6 +108,9 @@ class PnklForebruary extends HTMLElement {
         </div>
       </div>
     `;
+    const fitFrameInMonth = () => { // arrow function because in other case this is related to event
+      console.log(this); 
+    }
     this.shadowRoot.querySelector('.month').addEventListener('change', (event) => {
       if (event.target.value !== this.month) {
         this.month = event.target.value;
@@ -168,6 +122,26 @@ class PnklForebruary extends HTMLElement {
         this.year = event.target.value;
       }
     });
+    this.shadowRoot.addEventListener('dragstart', (event) => event.preventDefault);
+    this.shadowRoot.querySelector('.overflow-table').addEventListener('mousedown', (event) => {
+      const deltaClick = parseInt(event.target.style.left) - parseInt(event.clientX);
+      const frameOverflow = event.target;
+      var coords = this.getCoords(frameOverflow);
+      var shiftX = event.pageX - coords.left;
+
+      document.body.addEventListener('mousemove', moveFrame);
+      this.shadowRoot.addEventListener('mouseup', stopMoving);
+      function moveFrame(e) {
+        frameOverflow.style.left = e.pageX - shiftX - 28 +'px'; // -28 is border
+         
+      }
+      function stopMoving() {
+        document.body.removeEventListener('mousemove', moveFrame);
+        shadowRoot.removeEventListener('mouseup', stopMoving);
+        fitFrameInMonth(); // i can call it with this because this is related to event
+
+      }
+    });
   }
   get month() {
     return this._month;
@@ -175,14 +149,24 @@ class PnklForebruary extends HTMLElement {
   set month(value) {
     this.setAttribute('month', value);
   }
-
   get year() {
     return this._year;
   }
   set year(value) {
     this.setAttribute('year', value);
   }
-
+  get yearEnd() {
+    return this._yearEnd;
+  }
+  set yearEnd(value) {
+    this.setAttribute('year-end', value);
+  }
+  get yearBegin() {
+    return this._yearBegin;
+  }
+  set yearBegin(value) {
+    this.setAttribute('year-begin', value);
+  }
   get date() {
     return this._date;
   }
@@ -191,23 +175,32 @@ class PnklForebruary extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['month', 'year', 'date'];
+    return ['month', 'year', 'date', 'year-begin', 'year-end'];
   }
 
   attributeChangedCallback(name, oldval, newVal) {
+    console.log(name);
     switch(name) {
       case 'month':
         this._month = newVal;
-        this.changeSelectedMonth(newVal);
+        this.changeSelectedMonth();
         this.rotateOverflowFrame();
         break;
       case 'year':
         this._year = newVal;
-        this.changeSelectedYear(newVal);
+        this.changeSelectedYear();
         this.rotateOverflowFrame();
         break;
       case 'date':
         this._date = newVal;
+        break;
+      case 'year-begin':
+        this._yearBegin = newVal;
+        this.changeYearSelect();
+        break;
+      case 'year-end':
+        this._yearEnd = newVal;
+        this.changeYearSelect();
         break;
     }
   }
@@ -236,16 +229,16 @@ class PnklForebruary extends HTMLElement {
     };
   }
   connectedCallback() {
-    this.checkTdsInFrame();
+    this.changeYearSelect();
   }
   checkTdsInFrame() {
     const overflowDiv = this.shadowRoot.querySelector('.overflow-table');
-    const overflowPos = this.getCoords(overflowDiv);
+    const overflowPos = overflowDiv.style;
     console.log('check',overflowPos);
     let tds = this.shadowRoot.querySelectorAll('td');
     Array.prototype.forEach.call(tds, (elem, index) => {
       const tdPos = this.getCoords(elem);
-      if ((parseInt(tdPos.left) >= parseInt(overflowPos.left)) && (parseInt(tdPos.left) <= parseInt(overflowPos.left) + 514)) { // detecting elements, which are inside of that overflowBox on x coordinate
+      if ((parseInt(tdPos.left) >= parseInt(overflowPos.left)) && (parseInt(tdPos.left) <= parseInt(overflowPos.left) + 550)) { // detecting elements, which are inside of that overflowBox on x coordinate
         if (elem.getAttribute('id') !== 'disabledTD') {
           elem.classList.add('isInTheMonth');
         }
@@ -255,6 +248,27 @@ class PnklForebruary extends HTMLElement {
         }
       }
     });
+  }
+  changeYearSelect() {
+    let dateBegin = +this.yearBegin;
+    let dateEnd = +this.yearEnd;
+    console.log(dateBegin);
+    if (dateBegin === 0 && dateEnd === 0) {
+      dateBegin = 1985;
+      dateEnd = 2030; // if both are equal to '', it means that no data was passed
+    }
+    if ((dateBegin === '' || dateEnd === '')) {
+      return false;
+    }
+    const yearSelect = this.shadowRoot.querySelector('.year');
+    yearSelect.innerHTML = '';
+    for (let i = dateBegin; i <= dateEnd; i++) {
+      let option = document.createElement('option');
+      option.innerText = i;
+      console.log(option);
+      console.log(dateBegin);
+      yearSelect.appendChild(option);
+    }
   }
   changeSelectedMonth() {
     let options = this.shadowRoot.querySelectorAll('.month option');
@@ -282,7 +296,7 @@ class PnklForebruary extends HTMLElement {
       this.date = date;
       day = date.getDay(); // 1 should have 'day' offset
       console.log(day);
-      overflowDiv.style.left = (-15 + (day)*35) + 'px';
+      overflowDiv.style.left = (-14 + (day-1)*64) + 'px';
       this.checkTdsInFrame();
     }
   }
