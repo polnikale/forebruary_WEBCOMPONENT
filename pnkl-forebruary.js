@@ -109,7 +109,20 @@ class PnklForebruary extends HTMLElement {
       </div>
     `;
     const fitFrameInMonth = () => { // arrow function because in other case this is related to event
-      console.log(this); 
+      const overflowFrame = this.shadowRoot.querySelector('.overflow-table');
+      const overflowFrameLeftPos = parseInt(overflowFrame.style.left);
+      for (let i = 0; i < 63; i++) {
+        if ((overflowFrameLeftPos -i)%64 === 0) {
+          overflowFrame.style.left = overflowFrameLeftPos - i -14 + 'px';
+          console.log(overflowFrame.style.left);
+          break;
+        } else if ((overflowFrameLeftPos + i)%64 === 0) {
+          overflowFrame.style.left = overflowFrameLeftPos + i -14 + 'px';
+          console.log(overflowFrame.style.left);
+          break;
+        }
+        // -14 is default offset
+      }
     }
     this.shadowRoot.querySelector('.month').addEventListener('change', (event) => {
       if (event.target.value !== this.month) {
