@@ -64,6 +64,10 @@ class PnklForebruary extends HTMLElement {
           box-shadow: 0px 4px 15px -2px rgba(0,0,0,0.75);
           border-radius: 3px;
         }
+        .overflow-table.clicked {
+          z-index: 15;
+          transition: none;
+        }
 
         select {
           padding: 2px 4px;
@@ -112,19 +116,33 @@ class PnklForebruary extends HTMLElement {
       const overflowFrame = this.shadowRoot.querySelector('.overflow-table');
       const overflowFrameLeftPos = parseInt(overflowFrame.style.left);
       for (let i = 0; i < 63; i++) {
-        if (((overflowFrameLeftPos -i)%64 === 0) && overflowFrameLeftPos -i >= 0) {
-          overflowFrame.style.left = overflowFrameLeftPos - i -14 + 'px';
-          this.findMonthAndYear();
-          this.checkTdsInFrame();
-          break;
-        } else if (((overflowFrameLeftPos + i)%64 === 0) && overflowFrameLeftPos -i >= 0) {
-          overflowFrame.style.left = overflowFrameLeftPos + i -14 + 'px';
-          this.findMonthAndYear();
-          this.checkTdsInFrame();
-          break;
-        } else {
-          
-        }
+        if ((overflowFrameLeftPos -i)%64 === 0) {
+          if (overflowFrameLeftPos -i < -14) {
+            overflowFrame.style.left = '-14px';
+            break;
+          } else if (overflowFrameLeftPos -i > 370) {
+            overflowFrame.style.left = '370px';
+            break;
+          } else {
+            overflowFrame.style.left = overflowFrameLeftPos - i -14 + 'px';
+            this.findMonthAndYear();
+            this.checkTdsInFrame();
+            break;
+          }
+        } else if ((overflowFrameLeftPos + i)%64 === 0) {
+          if (overflowFrameLeftPos +i < -46) {
+            overflowFrame.style.left = '-14px';
+            break;
+          } else if (overflowFrameLeftPos +i > 370) {
+            overflowFrame.style.left = '370px';
+            break;
+          } else {
+            overflowFrame.style.left = overflowFrameLeftPos + i -14 + 'px';
+            this.findMonthAndYear();
+            this.checkTdsInFrame();
+            break;
+          }
+        } 
         // -14 is default offset
       }
     }
@@ -143,6 +161,7 @@ class PnklForebruary extends HTMLElement {
     this.shadowRoot.querySelector('.overflow-table').addEventListener('mousedown', (event) => {
       const deltaClick = parseInt(event.target.style.left) - parseInt(event.clientX);
       const frameOverflow = event.target;
+      frameOverflow.classList.add('clicked');
       var coords = this.getCoords(frameOverflow);
       var shiftX = event.pageX - coords.left;
 
@@ -153,6 +172,7 @@ class PnklForebruary extends HTMLElement {
          
       }
       function stopMoving() {
+        frameOverflow.classList.remove('clicked');
         document.body.removeEventListener('mousemove', moveFrame);
         shadowRoot.removeEventListener('mouseup', stopMoving);
         fitFrameInMonth(); // i can call it with this because this is related to event
@@ -251,12 +271,12 @@ class PnklForebruary extends HTMLElement {
   }
   checkTdsInFrame() {
     const overflowDiv = this.shadowRoot.querySelector('.overflow-table');
-    const overflowPos = overflowDiv.style;
+    const overflowPos = this.getCoords(overflowDiv);
     console.log('check',overflowPos);
     let tds = this.shadowRoot.querySelectorAll('td');
     Array.prototype.forEach.call(tds, (elem, index) => {
       const tdPos = this.getCoords(elem);
-      if ((parseInt(tdPos.left) >= parseInt(overflowPos.left)) && (parseInt(tdPos.left) <= parseInt(overflowPos.left) + 550)) { // detecting elements, which are inside of that overflowBox on x coordinate
+      if ((parseInt(tdPos.left) >= parseInt(overflowPos.left)) && (parseInt(tdPos.left) <= parseInt(overflowPos.left) + 450)) { // detecting elements, which are inside of that overflowBox on x coordinate
         if (elem.getAttribute('id') !== 'disabledTD') {
           elem.classList.add('isInTheMonth');
         }
@@ -322,8 +342,8 @@ class PnklForebruary extends HTMLElement {
   findMonthAndYear() {
     let overflowFrame = this.shadowRoot.querySelector('.overflow-table');
     let overflowFramePosLeft = parseInt(overflowFrame.style.left);
-    let firstDayIndex = Math.floor((overflowFramePosLeft + 14) / 64);
-    console.log('index', firstDayIndex);
+    let firstDayIndex = 7- Math.floor((overflowFramePosLeft + 14) / 64); // day of the week
+    // loop and find
   }
 }
 
