@@ -189,6 +189,7 @@ class PnklForebruary extends HTMLElement {
          
       }
       function stopMoving() {
+        frameOverflow.classList.remove('clicked');
         document.body.removeEventListener('mousemove', moveFrame);
         shadowRoot.removeEventListener('mouseup', stopMoving);
         fitFrameInMonth(); // i can call it with this because this is related to event
@@ -362,6 +363,7 @@ class PnklForebruary extends HTMLElement {
     const currentYear = +this.year;
     for (let i = 0; i <= 50; i++) { // approximate value
       let monthNewIndexPos = currentMonthIndex + i;
+      let minusYear = 0;
       const yearNewPos = Math.floor(monthNewIndexPos / 12) + currentYear;
       monthNewIndexPos = monthNewIndexPos % 12;
       if (new Date(yearNewPos, monthNewIndexPos, 1).getDay() === firstDayIndex) {
@@ -371,7 +373,6 @@ class PnklForebruary extends HTMLElement {
         break;
       }
       let monthNewIndexNeg = currentMonthIndex - i;
-      let minusYear;
       while (monthNewIndexNeg <= 0) {
         monthNewIndexNeg += 12;
         minusYear += 1;
