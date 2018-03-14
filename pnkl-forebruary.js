@@ -18,6 +18,7 @@ class PnklForebruary extends HTMLElement {
     this._month = '';
     this.monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'December'];
     this._year = '';
+    this.dateIsBeingFilled = false;
     this._yearBegin = '';
     this._yearEnd = '';
     this._date = '';
@@ -116,28 +117,44 @@ class PnklForebruary extends HTMLElement {
       const overflowFrame = this.shadowRoot.querySelector('.overflow-table');
       const overflowFrameLeftPos = parseInt(overflowFrame.style.left);
       for (let i = 0; i < 63; i++) {
-        if ((overflowFrameLeftPos -i)%64 === 0) {
+        if ((overflowFrameLeftPos -i) % 64 === 0) {
+          console.log('overflow', overflowFrameLeftPos - i);
           if (overflowFrameLeftPos -i < -14) {
             overflowFrame.style.left = '-14px';
+            console.log('overflowFin', overflowFrame.style.left);
+            this.findMonthAndYear();
+            this.checkTdsInFrame();
             break;
           } else if (overflowFrameLeftPos -i > 370) {
             overflowFrame.style.left = '370px';
+            console.log('overflowFin', overflowFrame.style.left);
+            this.findMonthAndYear();
+            this.checkTdsInFrame();
             break;
           } else {
             overflowFrame.style.left = overflowFrameLeftPos - i -14 + 'px';
+            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           }
-        } else if ((overflowFrameLeftPos + i)%64 === 0) {
+        } else if ((overflowFrameLeftPos + i) % 64 === 0) {
+          console.log('overflow',overflowFrameLeftPos + i);
           if (overflowFrameLeftPos +i < -46) {
             overflowFrame.style.left = '-14px';
+            console.log('overflowFin', overflowFrame.style.left);
+            this.findMonthAndYear();
+            this.checkTdsInFrame();
             break;
           } else if (overflowFrameLeftPos +i > 370) {
             overflowFrame.style.left = '370px';
+            console.log('overflowFin', overflowFrame.style.left);
+            this.findMonthAndYear();
+            this.checkTdsInFrame();
             break;
           } else {
             overflowFrame.style.left = overflowFrameLeftPos + i -14 + 'px';
+            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
@@ -172,7 +189,6 @@ class PnklForebruary extends HTMLElement {
          
       }
       function stopMoving() {
-        frameOverflow.classList.remove('clicked');
         document.body.removeEventListener('mousemove', moveFrame);
         shadowRoot.removeEventListener('mouseup', stopMoving);
         fitFrameInMonth(); // i can call it with this because this is related to event
@@ -216,7 +232,6 @@ class PnklForebruary extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldval, newVal) {
-    console.log(name);
     switch(name) {
       case 'month':
         this._month = newVal;
@@ -272,7 +287,6 @@ class PnklForebruary extends HTMLElement {
   checkTdsInFrame() {
     const overflowDiv = this.shadowRoot.querySelector('.overflow-table');
     const overflowPos = this.getCoords(overflowDiv);
-    console.log('check',overflowPos);
     let tds = this.shadowRoot.querySelectorAll('td');
     Array.prototype.forEach.call(tds, (elem, index) => {
       const tdPos = this.getCoords(elem);
@@ -290,7 +304,6 @@ class PnklForebruary extends HTMLElement {
   changeYearSelect() {
     let dateBegin = +this.yearBegin;
     let dateEnd = +this.yearEnd;
-    console.log(dateBegin);
     if (dateBegin === 0 && dateEnd === 0) {
       dateBegin = 1985;
       dateEnd = 2030; // if both are equal to '', it means that no data was passed
@@ -303,8 +316,6 @@ class PnklForebruary extends HTMLElement {
     for (let i = dateBegin; i <= dateEnd; i++) {
       let option = document.createElement('option');
       option.innerText = i;
-      console.log(option);
-      console.log(dateBegin);
       yearSelect.appendChild(option);
     }
     this.changeSelectedYear();
@@ -314,7 +325,6 @@ class PnklForebruary extends HTMLElement {
     Array.prototype.forEach.call(options, (elem, index) => {
       if (elem.textContent === this.month) {
         elem.parentNode.selectedIndex = index;
-        console.log(elem.parentNode);
       } 
     });
   }
@@ -328,20 +338,24 @@ class PnklForebruary extends HTMLElement {
   }
 
   rotateOverflowFrame() {
+    if (this.dateIsBeingFilled) {
+      return false;
+    }
     let day;
     const date = new Date(this.year, this.monthArray.indexOf(this.month)+1, 1);
     const overflowDiv = this.shadowRoot.querySelector('.overflow-table');
     if (this.date !== date && this.year && this.month) {
       this.date = date;
       day = date.getDay(); // 1 should have 'day' offset
-      console.log(day);
       overflowDiv.style.left = (-14 + (day)*64) + 'px';
       this.checkTdsInFrame();
     }
   }
 
   findMonthAndYear() {
+    // fix error
     const overflowFrame = this.shadowRoot.querySelector('.overflow-table');
+    this.dateIsBeingFilled = true;
     const overflowFramePosLeft = parseInt(overflowFrame.style.left);
     const firstDayIndex = 7- Math.floor((overflowFramePosLeft + 14) / 64); // day of the week
     const currentMonthIndex = this.monthArray.indexOf(this.month) + 1;
@@ -350,11 +364,10 @@ class PnklForebruary extends HTMLElement {
       let monthNewIndexPos = currentMonthIndex + i;
       const yearNewPos = Math.floor(monthNewIndexPos / 12) + currentYear;
       monthNewIndexPos = monthNewIndexPos % 12;
-      console.log(monthNewIndexPos, 'month');
-      console.log(currentYear, 'yearrrrrrr', yearNewPos);
       if (new Date(yearNewPos, monthNewIndexPos, 1).getDay() === firstDayIndex) {
         this.year = yearNewPos;
         this.month = this.monthArray[monthNewIndexPos];
+        this.dateIsBeingFilled = false;
         break;
       }
       let monthNewIndexNeg = currentMonthIndex - i;
@@ -367,6 +380,7 @@ class PnklForebruary extends HTMLElement {
       if (new Date(yearNewNeg, monthNewIndexNeg, 1).getDay() === firstDayIndex) {
         this.year = yearNewNeg;
         this.month = this.monthArray[monthNewIndexNeg];
+        this.dateIsBeingFilled = false;
         break;
       }
     }
