@@ -307,6 +307,7 @@ class PnklForebruary extends HTMLElement {
       console.log(dateBegin);
       yearSelect.appendChild(option);
     }
+    this.changeSelectedYear();
   }
   changeSelectedMonth() {
     let options = this.shadowRoot.querySelectorAll('.month option');
@@ -340,10 +341,36 @@ class PnklForebruary extends HTMLElement {
   }
 
   findMonthAndYear() {
-    let overflowFrame = this.shadowRoot.querySelector('.overflow-table');
-    let overflowFramePosLeft = parseInt(overflowFrame.style.left);
-    let firstDayIndex = 7- Math.floor((overflowFramePosLeft + 14) / 64); // day of the week
-    // loop and find
+    const overflowFrame = this.shadowRoot.querySelector('.overflow-table');
+    const overflowFramePosLeft = parseInt(overflowFrame.style.left);
+    const firstDayIndex = 7- Math.floor((overflowFramePosLeft + 14) / 64); // day of the week
+    const currentMonthIndex = this.monthArray.indexOf(this.month) + 1;
+    const currentYear = +this.year;
+    for (let i = 0; i <= 50; i++) { // approximate value
+      let monthNewIndexPos = currentMonthIndex + i;
+      const yearNewPos = Math.floor(monthNewIndexPos / 12) + currentYear;
+      monthNewIndexPos = monthNewIndexPos % 12;
+      console.log(monthNewIndexPos, 'month');
+      console.log(currentYear, 'yearrrrrrr', yearNewPos);
+      if (new Date(yearNewPos, monthNewIndexPos, 1).getDay() === firstDayIndex) {
+        this.year = yearNewPos;
+        this.month = this.monthArray[monthNewIndexPos];
+        break;
+      }
+      let monthNewIndexNeg = currentMonthIndex - i;
+      let minusYear;
+      while (monthNewIndexNeg <= 0) {
+        monthNewIndexNeg += 12;
+        minusYear += 1;
+      }
+      const yearNewNeg = currentYear - minusYear;
+      if (new Date(yearNewNeg, monthNewIndexNeg, 1).getDay() === firstDayIndex) {
+        this.year = yearNewNeg;
+        this.month = this.monthArray[monthNewIndexNeg];
+        break;
+      }
+    }
+    
   }
 }
 
