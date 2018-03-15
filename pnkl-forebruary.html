@@ -1,22 +1,150 @@
-(function() {
-  if ('registerElement' in document
-      && 'import' in document.createElement('link')
-      && 'content' in document.createElement('template')) {
-    // platform is good!
-    console.log('ok');
-  } else {
-    // polyfill the platform!
-    console.log('shit');
-    var e = document.createElement('script');
-    e.src = './bower_components/webcomponentsjs/webcomponents-lite.js';
-    document.body.appendChild(e);
-  }
-})();
+<template id="pnkl-forebruary">
+  <style>
+    .wrapper {
+      margin: 20px;
+    }
+    .wrapper-table {
+      position: relative;
+      margin: 30px 0 0 0;
+      padding: 0;
+    }
+    td {
+      width: 60px;
+      height: 55px;
+      text-align: center;
+      color: #333333;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 30px;
+      font-weight: bold;
+      border-radius: 5px;
+      transition: background-color .3s;
+    }
+    td.isInTheMonth {
+      z-index: 11;
+      position: relative;
+    }
+    td.isInTheMonth:hover {
+      background-color: #D5D6D8;
+    }
+    table {
+      background-color: #EFF0F2;
+    }
+    .overflow-table {
+      cursor: pointer;
+      top: -21px;
+      left: -31px;
+      position: absolute;
+      padding: 168px 223px;
+      z-index: 10;
+      border: 28px solid #FAFAFA;
+      transition: left 0.5s;
+      box-shadow: 0px 4px 15px -2px rgba(0,0,0,0.75);
+      border-radius: 3px;
+    }
+    .overflow-table.clicked {
+      transition: none;
+      z-index: 15;
+    }
+    .rel {
+      height: 350px;
+      border-radius: 8px;
+      width: 6px;
+      background-color: red;
+      position: absolute;
+      right: 0;
+      top: -7px;
+    }
+    .rel::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 6px;
+      border-radius: 8px;
+      background-color: red;
+    }
+    .rel::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100px;
+      height: 6px;
+      border-radius: 8px;
+      background-color: red;
+    }
+    select {
+      margin: 0 10px 20px 0;
+      display: inline-block;
+      padding: 10px 70px 10px 13px;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #e3e3e3;
+      border-radius: 3px;
+      background: url("https://image.ibb.co/iMeAJv/selectbox_arrow.png") right center no-repeat;
+      background-color: #fff;
+      color: #444444;
+      font-size: 12px;
+      line-height: 16px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+    select option {
+      padding: 0 4px;
+    }
+    select::-ms-expand {
+      display: none;
+    }
+    select:disabled::-ms-expand {
+      background: #f60;
+    }
+  </style>
+  <div class="wrapper">
+    <select class="month">
+      <option>January</option>
+      <option>February</option>
+      <option>March</option>
+      <option>April</option>
+      <option>May</option>
+      <option>June</option>
+      <option>July</option>
+      <option>August</option>
+      <option>September</option>
+      <option>October</option>
+      <option>November</option>
+      <option>December</option>
+    </select>
+    <select class="year">
+    </select>
+    
+    <div class="wrapper-table">
+      <table>
+        <tr><td colspan="6" id="disabledTD"></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+        <tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td></tr>
+        <tr><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td></tr>
+        <tr><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td></tr>
+        <tr><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td></tr>
+        <tr><td>30</td><td>31</td></tr>
+      </table>
+      <div class="overflow-table">
+        <div class="rel">
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
+<script>
+const currentDocument = document.currentScript.ownerDocument;
 class PnklForebruary extends HTMLElement { 
   constructor() {
     super();
-    let shadowRoot = this.attachShadow({mode: 'open'});
+    const shadowRoot = this.attachShadow({mode: 'open'});
+    const template = currentDocument.querySelector('#pnkl-forebruary');
+    const instance = template.content.cloneNode(true);
+    shadowRoot.appendChild(instance);
     this._month = '';
     this.monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'December'];
     this._year = '';
@@ -24,145 +152,8 @@ class PnklForebruary extends HTMLElement {
     this._yearBegin = '';
     this._yearEnd = '';
     this._date = '';
-    this.shadowRoot.innerHTML = `
-      <style>
-        .wrapper {
-          margin: 20px;
-        }
-        .wrapper-table {
-          position: relative;
-          margin: 30px 0 0 0;
-          padding: 0;
-        }
-        td {
-          width: 60px;
-          height: 55px;
-          text-align: center;
-          color: #333333;
-          font-family: 'Helvetica Neue', sans-serif;
-          font-size: 30px;
-          font-weight: bold;
-          border-radius: 5px;
-          transition: background-color .3s;
-        }
-        td.isInTheMonth {
-          z-index: 11;
-          position: relative;
-        }
-        td.isInTheMonth:hover {
-          background-color: #D5D6D8;
-        }
-        table {
-          background-color: #EFF0F2;
-        }
-        .overflow-table {
-          cursor: pointer;
-          top: -21px;
-          left: -31px;
-          position: absolute;
-          padding: 168px 223px;
-          z-index: 10;
-          border: 28px solid #FAFAFA;
-          transition: left 0.5s;
-          box-shadow: 0px 4px 15px -2px rgba(0,0,0,0.75);
-          border-radius: 3px;
-        }
-        .overflow-table.clicked {
-          transition: none;
-          z-index: 15;
-        }
-        .rel {
-          height: 350px;
-          border-radius: 8px;
-          width: 6px;
-          background-color: red;
-          position: absolute;
-          right: 0;
-          top: -7px;
-        }
-        .rel::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          right: 0;
-          width: 100px;
-          height: 6px;
-          border-radius: 8px;
-          background-color: red;
-        }
-        .rel::before {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          width: 100px;
-          height: 6px;
-          border-radius: 8px;
-          background-color: red;
-        }
-        select {
-          margin: 0 10px 20px 0;
-          display: inline-block;
-          padding: 10px 70px 10px 13px;
-          max-width: 100%;
-          height: auto;
-          border: 1px solid #e3e3e3;
-          border-radius: 3px;
-          background: url("https://image.ibb.co/iMeAJv/selectbox_arrow.png") right center no-repeat;
-          background-color: #fff;
-          color: #444444;
-          font-size: 12px;
-          line-height: 16px;
-          appearance: none;
-          -webkit-appearance: none;
-          -moz-appearance: none;
-        }
-        select option {
-          padding: 0 4px;
-        }
-        select::-ms-expand {
-          display: none;
-        }
-        select:disabled::-ms-expand {
-          background: #f60;
-        }
-      </style>
-      <div class="wrapper">
-        <select class="month">
-          <option>January</option>
-          <option>February</option>
-          <option>March</option>
-          <option>April</option>
-          <option>May</option>
-          <option>June</option>
-          <option>July</option>
-          <option>August</option>
-          <option>September</option>
-          <option>October</option>
-          <option>November</option>
-          <option>December</option>
-        </select>
-        <select class="year">
-        </select>
-        
-        <div class="wrapper-table">
-          <table>
-            <tr><td colspan="6" id="disabledTD"></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
-            <tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td></tr>
-            <tr><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td></tr>
-            <tr><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td></tr>
-            <tr><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td></tr>
-            <tr><td>30</td><td>31</td></tr>
-          </table>
-          <div class="overflow-table">
-            <div class="rel">
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
     const fitFrameInMonth = () => { // arrow function because in other case this is related to event
-      const overflowFrame = this.shadowRoot.querySelector('.overflow-table');
+      const overflowFrame = shadowRoot.querySelector('.overflow-table');
       const overflowFrameLeftPos = parseInt(overflowFrame.style.left);
       for (let i = 0; i < 63; i++) {
         if ((overflowFrameLeftPos -i) % 64 === 0) {
@@ -281,6 +272,41 @@ class PnklForebruary extends HTMLElement {
     return ['month', 'year', 'date', 'year-begin', 'year-end'];
   }
 
+  get month() {
+    return this._month;
+  }
+  set month(value) {
+    this.setAttribute('month', value);
+  }
+  get year() {
+    return this._year;
+  }
+  set year(value) {
+    this.setAttribute('year', value);
+  }
+  get yearEnd() {
+    return this._yearEnd;
+  }
+  set yearEnd(value) {
+    this.setAttribute('year-end', value);
+  }
+  get yearBegin() {
+    return this._yearBegin;
+  }
+  set yearBegin(value) {
+    this.setAttribute('year-begin', value);
+  }
+  get date() {
+    return this._date;
+  }
+  set date(value) {
+    this.setAttribute('date', value);
+  }
+
+  static get observedAttributes() {
+    return ['month', 'year', 'date', 'year-begin', 'year-end'];
+  }
+
   attributeChangedCallback(name, oldval, newVal) {
     switch(name) {
       case 'month':
@@ -361,6 +387,7 @@ class PnklForebruary extends HTMLElement {
     if ((dateBegin === '' || dateEnd === '')) {
       return false;
     }
+    console.log(this.shadowRoot);
     const yearSelect = this.shadowRoot.querySelector('.year');
     yearSelect.innerHTML = '';
     for (let i = dateBegin; i <= dateEnd; i++) {
@@ -372,14 +399,8 @@ class PnklForebruary extends HTMLElement {
   }
   changeSelectedMonth() {
     let options = this.shadowRoot.querySelectorAll('.month option');
-    Array.prototype.forEach.call(options, (elem, index) => {
-      if (elem.textContent === this.month) {
-        elem.parentNode.selectedIndex = index;
-      } 
-    });
   }
   changeSelectedYear() {
-    console.log(this.shadowRoot);
     let options = this.shadowRoot.querySelectorAll('.year option');
     Array.prototype.forEach.call(options, (elem, index) => {
       if (elem.textContent === this.year) {
@@ -438,15 +459,5 @@ class PnklForebruary extends HTMLElement {
     
   }
 }
-
 customElements.define('pnkl-forebruary', PnklForebruary);
-
-class Fan extends PnklForebruary {
-  constructor() {
-    super();
-  }
-  connectedCallback() {
-    console.log('lol');
-  }
-}
-customElements.define('my-fan', Fan);
+</script>

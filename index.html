@@ -5,10 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <script src="pnkl-forebruary.js" defer></script>
+  <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <link rel="import" href="./pnkl-forebruary.html">
+  <!-- <script src="pnkl-forebruary.js"></script> -->
 </head>
 <body>
-  <pnkl-forebruary month="February" year="2015" year-begin="1980" year-end="2030">
+  <pnkl-forebruary month="February" year="2013" year-begin="2010" year-end="2050">
   </pnkl-forebruary>
+  <script>
+      window.addEventListener('WebComponentsReady', function() {
+        // At this point we are guaranteed that all required polyfills have loaded,
+        // all HTML imports have loaded, and all defined custom elements have upgraded
+        let MyElement = customElements.get('pnkl-forebruary');
+        let element = document.querySelector('pnkl-forebruary');
+        console.assert(element instanceof MyElement);  // 👍
+      });
+    </script>
 </body>
 </html>
