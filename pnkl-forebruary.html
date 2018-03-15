@@ -151,10 +151,17 @@ class PnklForebruary extends HTMLElement {
     this.dateIsBeingFilled = false;
     this._yearBegin = '';
     this._yearEnd = '';
+    this._lineColor = '';
     this._date = '';
+    let input = document.createElement('input');
+    input.setAttribute('id', 'pnkl-hidden-date');
+    document.body.appendChild(input);
+    input.style.display="none";
     const fitFrameInMonth = () => { // arrow function because in other case this is related to event
       const overflowFrame = shadowRoot.querySelector('.overflow-table');
       const overflowFrameLeftPos = parseInt(overflowFrame.style.left);
+      const date = new Date(this.year, this.monthArray.indexOf(this.month)+1, 1);
+      this.date = date;
       for (let i = 0; i < 63; i++) {
         if ((overflowFrameLeftPos -i) % 64 === 0) {
           if (overflowFrameLeftPos -i < -14) {
@@ -224,7 +231,6 @@ class PnklForebruary extends HTMLElement {
         document.body.removeEventListener('mousemove', moveFrame);
         shadowRoot.removeEventListener('mouseup', stopMoving);
         fitFrameInMonth(); // i can call it with this because this is related to event
-
       }
     });
   }
@@ -256,41 +262,7 @@ class PnklForebruary extends HTMLElement {
     return this._date;
   }
   set date(value) {
-    this.setAttribute('date', value);
-  }
-
-  static get observedAttributes() {
-    return ['month', 'year', 'date', 'year-begin', 'year-end'];
-  }
-
-  get month() {
-    return this._month;
-  }
-  set month(value) {
-    this.setAttribute('month', value);
-  }
-  get year() {
-    return this._year;
-  }
-  set year(value) {
-    this.setAttribute('year', value);
-  }
-  get yearEnd() {
-    return this._yearEnd;
-  }
-  set yearEnd(value) {
-    this.setAttribute('year-end', value);
-  }
-  get yearBegin() {
-    return this._yearBegin;
-  }
-  set yearBegin(value) {
-    this.setAttribute('year-begin', value);
-  }
-  get date() {
-    return this._date;
-  }
-  set date(value) {
+    document.getElementById('pnkl-hidden-date').value = value;
     this.setAttribute('date', value);
   }
 
@@ -321,6 +293,9 @@ class PnklForebruary extends HTMLElement {
         this._yearEnd = newVal;
         this.changeYearSelect();
         break;
+      case 'line-color':
+        this._lineColor = newVal;
+        this.changeColorLine();
     }
   }
   connectedCallback() {

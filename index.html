@@ -13,13 +13,13 @@
   <pnkl-forebruary month="February" year="2013" year-begin="2010" year-end="2050">
   </pnkl-forebruary>
   <script>
-      window.addEventListener('WebComponentsReady', function() {
-        // At this point we are guaranteed that all required polyfills have loaded,
-        // all HTML imports have loaded, and all defined custom elements have upgraded
-        let MyElement = customElements.get('pnkl-forebruary');
-        let element = document.querySelector('pnkl-forebruary');
-        console.assert(element instanceof MyElement);  // 👍
-      });
-    </script>
+    window.addEventListener('WebComponentsReady', function() {
+      // At this point we are guaranteed that all required polyfills have loaded,
+      // all HTML imports have loaded, and all defined custom elements have upgraded
+      let MyElement = customElements.get('pnkl-forebruary');
+      let element = document.querySelector('pnkl-forebruary');
+      console.assert(element instanceof MyElement);  // 👍
+    });
+  </script>
 </body>
 </html>
