@@ -380,7 +380,6 @@ class PnklForebruary extends HTMLElement {
   }
 
   findMonthAndYear() {
-    // fix error
     const overflowFrame = this.shadowRoot.querySelector('.overflow-table');
     this.dateIsBeingFilled = true;
     const overflowFramePosLeft = parseInt(overflowFrame.style.left);

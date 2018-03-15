@@ -181,13 +181,14 @@ class PnklForebruary extends HTMLElement {
             break;
           }
         } else if ((overflowFrameLeftPos + i) % 64 === 0) {
-          if (overflowFrameLeftPos +i < -46) {
+          if (overflowFrameLeftPos +i < -14) {
             overflowFrame.style.left = '-14px';
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           } else if (overflowFrameLeftPos +i > 370) {
             overflowFrame.style.left = '370px';
+            this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           } else {
@@ -293,9 +294,6 @@ class PnklForebruary extends HTMLElement {
         this._yearEnd = newVal;
         this.changeYearSelect();
         break;
-      case 'line-color':
-        this._lineColor = newVal;
-        this.changeColorLine();
     }
   }
   connectedCallback() {
@@ -332,7 +330,7 @@ class PnklForebruary extends HTMLElement {
     let tds = this.shadowRoot.querySelectorAll('td');
     Array.prototype.forEach.call(tds, (elem, index) => {
       const tdPos = this.getCoords(elem);
-      if ((parseInt(tdPos.left) >= parseInt(overflowPos.left)) && (parseInt(tdPos.left) <= parseInt(overflowPos.left) + 420)) { // detecting elements, which are inside of that overflowBox on x coordinate
+      if ((parseInt(tdPos.left) >= parseInt(overflowPos.left)) && (parseInt(tdPos.left) <= parseInt(overflowPos.left) + 400)) { // detecting elements, which are inside of that overflowBox on x coordinate
         if (elem.getAttribute('id') !== 'disabledTD') {
           elem.classList.add('isInTheMonth');
         }
@@ -361,6 +359,11 @@ class PnklForebruary extends HTMLElement {
   }
   changeSelectedMonth() {
     let options = this.shadowRoot.querySelectorAll('.month option');
+    Array.prototype.forEach.call(options, (elem, index) => {
+      if (elem.textContent === this.month) {
+        elem.parentNode.selectedIndex = index;
+      } 
+    });
   }
   changeSelectedYear() {
     let options = this.shadowRoot.querySelectorAll('.year option');
@@ -387,7 +390,6 @@ class PnklForebruary extends HTMLElement {
   }
 
   findMonthAndYear() {
-    // fix error
     const overflowFrame = this.shadowRoot.querySelector('.overflow-table');
     this.dateIsBeingFilled = true;
     const overflowFramePosLeft = parseInt(overflowFrame.style.left);

@@ -1,0 +1,25 @@
+{
+  "name": "forebruary_webcomponent",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/polnikale/forebruary_WEBCOMPONENT.git"
+  },
+  "author": "polnikale <nikpolale@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@webcomponents/webcomponentsjs": "^1.1.0",
+    "http-server": "^0.11.1"
+  },
+  "dependencies": {},
+  "description": "Здравствуйте, это мой тестовый проект по созданию компонента уникального календаря. В ходе выполнения данной задачи я использовал технологию WebComponents. При использовании моего компонента, есть два разнхы варианта подключения и использования его: 1. Подключаем pnkl-forebruary.js, добавляем внутрь body нашего index.html <pnkl-forebruary></pnkl-forebruary> с нужными вам аттрибутами.  Преимущества: *проект работает прямо сразу же, открывая index.html *используем script, а не еще неустойчивый import Недостатки: *нет кросс-браузерности(поддерживается Google Chrome + Opera) *всё пишем в .js документе, неудобно редактировать html/css 2. (предпочтительно) Подключем pnkl-forebruary.html с помощью import, добавляем внутрь body нашего index.html <pnkl-forebruary></pnkl-forebruary> с нужными вам аттрибутами. После этого требуется открыть проект на сервере. Если Вам нужна кроссбраузерность, требуется установить bower_components в корень проекта, и добавить несколько строчек кода:  ```javascript <script src=\"bower_components/webcomponentsjs/webcomponents-loader.js\"></script> <script>   window.addEventListener('WebComponentsReady', function() {     // At this point we are guaranteed that all required polyfills have loaded,     // all HTML imports have loaded, and all defined custom elements have upgraded     let MyElement = customElements.get('pnkl-forebruary');     let element = document.querySelector('pnkl-forebruary');     console.assert(element instanceof MyElement);    }); </script> ``` Преимущества:  *Поддерживаются все современные браузеры *Удобно редактировать html/css *Использовать import в WebComponents - общепринятый стандарт Недостатки: *Затрата времени на первоначальную настройку",
+  "bugs": {
+    "url": "https://github.com/polnikale/forebruary_WEBCOMPONENT/issues"
+  },
+  "homepage": "https://github.com/polnikale/forebruary_WEBCOMPONENT#readme",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "yarn http-server"
+  }
+}
