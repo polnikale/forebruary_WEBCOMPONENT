@@ -8,6 +8,7 @@
 *нет кросс-браузерности(поддерживается Google Chrome + Opera)
 *всё пишем в .js документе, неудобно редактировать html/css
 2. (предпочтительно) Подключем pnkl-forebruary.html с помощью import, добавляем внутрь body нашего index.html <pnkl-forebruary></pnkl-forebruary> с нужными вам аттрибутами. После этого требуется открыть проект на сервере. Если Вам нужна кроссбраузерность, требуется установить bower_components в корень проекта, и добавить несколько строчек кода: 
+```javascript
 <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 <script>
   window.addEventListener('WebComponentsReady', function() {
@@ -18,6 +19,7 @@
     console.assert(element instanceof MyElement); 
   });
 </script>
+```
 Преимущества: 
 *Поддерживаются все современные браузеры
 *Удобно редактировать html/css
@@ -32,7 +34,7 @@
 Связывание этого компонента с внешним компонентом производится с помощью аттрибутов у самого элемента
 
 Наследование компонента происходит последствием создания нового класса, который, собственно, наследует PnklForebruary:
-```
+```javascript
 class PnklForebruaryV2 extends PnklForebruary {
   constructor() {
     super()
@@ -46,21 +48,22 @@ customElements.define('pnkl-forebruary2', PnklForebruaryV2);
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
 API
-```
+```javascript
 <pnkl-forebruary></pnkl-forebruary>
 ```
 attribute month   
-```<pnkl-forebruary month="February"> 
+```javascript
+<pnkl-forebruary month="February"> 
 ```
 аттрибут принимает строку с названием месяца на Английском. Месяц начинать с большой буквы. Каждый раз, когда месяц меняется, этот аттрибут тоже меняется
 attribute year   
-```
+```javascript
 <pnkl-forebruary year="2013"> 
 ```
 аттрибут принимает строку с годом. Каждый раз, когда год меняется, этот аттрибут тоже меняется.
 Атррибуты month и year обязательно задавать вместе. Если хоть один из этих аттрибутов не задать, начальный месяц будет January, а начальный год - value у атррибута date-begin или 1985(если не задано значение аттрибута).
 attribute year-begin и year-end 
-```
+```javascript
 <pnkl-forebruary year-begin="2013" year-end="2050">
 ``` 
 аттрибуты принимают строку с годом. Если вы не задаете year-begin и year-end, стандартные значение - 1985/2030.
