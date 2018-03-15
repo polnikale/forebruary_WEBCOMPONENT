@@ -1,18 +1,3 @@
-(function() {
-  if ('registerElement' in document
-      && 'import' in document.createElement('link')
-      && 'content' in document.createElement('template')) {
-    // platform is good!
-    console.log('ok');
-  } else {
-    // polyfill the platform!
-    console.log('shit');
-    var e = document.createElement('script');
-    e.src = './bower_components/webcomponentsjs/webcomponents-lite.js';
-    document.body.appendChild(e);
-  }
-})();
-
 class PnklForebruary extends HTMLElement { 
   constructor() {
     super();
@@ -166,43 +151,35 @@ class PnklForebruary extends HTMLElement {
       const overflowFrameLeftPos = parseInt(overflowFrame.style.left);
       for (let i = 0; i < 63; i++) {
         if ((overflowFrameLeftPos -i) % 64 === 0) {
-          console.log('overflow', overflowFrameLeftPos - i);
           if (overflowFrameLeftPos -i < -14) {
             overflowFrame.style.left = '-14px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           } else if (overflowFrameLeftPos -i > 370) {
             overflowFrame.style.left = '370px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           } else {
             overflowFrame.style.left = overflowFrameLeftPos - i -14 + 'px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           }
         } else if ((overflowFrameLeftPos + i) % 64 === 0) {
-          console.log('overflow',overflowFrameLeftPos + i);
           if (overflowFrameLeftPos +i < -46) {
             overflowFrame.style.left = '-14px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           } else if (overflowFrameLeftPos +i > 370) {
             overflowFrame.style.left = '370px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           } else {
             overflowFrame.style.left = overflowFrameLeftPos + i -14 + 'px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
@@ -379,7 +356,6 @@ class PnklForebruary extends HTMLElement {
     });
   }
   changeSelectedYear() {
-    console.log(this.shadowRoot);
     let options = this.shadowRoot.querySelectorAll('.year option');
     Array.prototype.forEach.call(options, (elem, index) => {
       if (elem.textContent === this.year) {
@@ -446,7 +422,6 @@ class Fan extends PnklForebruary {
     super();
   }
   connectedCallback() {
-    console.log('lol');
   }
 }
 customElements.define('my-fan', Fan);

@@ -157,43 +157,34 @@ class PnklForebruary extends HTMLElement {
       const overflowFrameLeftPos = parseInt(overflowFrame.style.left);
       for (let i = 0; i < 63; i++) {
         if ((overflowFrameLeftPos -i) % 64 === 0) {
-          console.log('overflow', overflowFrameLeftPos - i);
           if (overflowFrameLeftPos -i < -14) {
             overflowFrame.style.left = '-14px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           } else if (overflowFrameLeftPos -i > 370) {
             overflowFrame.style.left = '370px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           } else {
             overflowFrame.style.left = overflowFrameLeftPos - i -14 + 'px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           }
         } else if ((overflowFrameLeftPos + i) % 64 === 0) {
-          console.log('overflow',overflowFrameLeftPos + i);
           if (overflowFrameLeftPos +i < -46) {
             overflowFrame.style.left = '-14px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           } else if (overflowFrameLeftPos +i > 370) {
             overflowFrame.style.left = '370px';
-            console.log('overflowFin', overflowFrame.style.left);
-            this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
           } else {
             overflowFrame.style.left = overflowFrameLeftPos + i -14 + 'px';
-            console.log('overflowFin', overflowFrame.style.left);
             this.findMonthAndYear();
             this.checkTdsInFrame();
             break;
@@ -387,7 +378,6 @@ class PnklForebruary extends HTMLElement {
     if ((dateBegin === '' || dateEnd === '')) {
       return false;
     }
-    console.log(this.shadowRoot);
     const yearSelect = this.shadowRoot.querySelector('.year');
     yearSelect.innerHTML = '';
     for (let i = dateBegin; i <= dateEnd; i++) {
