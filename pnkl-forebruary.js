@@ -369,7 +369,7 @@ class PnklForebruary extends HTMLElement {
       return false;
     }
     let day;
-    const date = new Date(this.year, this.monthArray.indexOf(this.month)+1, 1);
+    const date = new Date(this.year, this.monthArray.indexOf(this.month), 1);
     const overflowDiv = this.shadowRoot.querySelector('.overflow-table');
     if (this.date !== date && this.year && this.month) {
       this.date = date;
@@ -389,8 +389,8 @@ class PnklForebruary extends HTMLElement {
     for (let i = 0; i <= 50; i++) { // approximate value
       let monthNewIndexPos = currentMonthIndex + i;
       let minusYear = 0;
-      const yearNewPos = Math.floor(monthNewIndexPos / 12) + currentYear;
-      monthNewIndexPos = monthNewIndexPos % 12;
+      const yearNewPos = Math.floor(monthNewIndexPos / 11) + currentYear;
+      monthNewIndexPos = monthNewIndexPos % 11;
       if (new Date(yearNewPos, monthNewIndexPos, 1).getDay() === firstDayIndex) {
         this.year = yearNewPos;
         this.month = this.monthArray[monthNewIndexPos];
@@ -399,7 +399,7 @@ class PnklForebruary extends HTMLElement {
       }
       let monthNewIndexNeg = currentMonthIndex - i;
       while (monthNewIndexNeg <= 0) {
-        monthNewIndexNeg += 12;
+        monthNewIndexNeg += 11;
         minusYear += 1;
       }
       const yearNewNeg = currentYear - minusYear;
