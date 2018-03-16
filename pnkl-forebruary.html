@@ -160,7 +160,7 @@ class PnklForebruary extends HTMLElement {
     const fitFrameInMonth = () => { // arrow function because in other case this is related to event
       const overflowFrame = shadowRoot.querySelector('.overflow-table');
       const overflowFrameLeftPos = parseInt(overflowFrame.style.left);
-      const date = new Date(this.year, this.monthArray.indexOf(this.month)+1, 1);
+      const date = new Date(this.year, this.monthArray.indexOf(this.month), 1);
       this.date = date;
       for (let i = 0; i < 63; i++) {
         if ((overflowFrameLeftPos -i) % 64 === 0) {
@@ -379,12 +379,13 @@ class PnklForebruary extends HTMLElement {
       return false;
     }
     let day;
-    const date = new Date(this.year, this.monthArray.indexOf(this.month)+1, 1);
+    const date = new Date(this.year, this.monthArray.indexOf(this.month), 1);
     const overflowDiv = this.shadowRoot.querySelector('.overflow-table');
     if (this.date !== date && this.year && this.month) {
       this.date = date;
       day = date.getDay(); // 1 should have 'day' offset
-      overflowDiv.style.left = (-14 + (day)*64) + 'px';
+      console.log(day);
+      overflowDiv.style.left = (-14 + (day-1)*64) + 'px';
       this.checkTdsInFrame();
     }
   }
@@ -399,8 +400,8 @@ class PnklForebruary extends HTMLElement {
     for (let i = 0; i <= 50; i++) { // approximate value
       let monthNewIndexPos = currentMonthIndex + i;
       let minusYear = 0;
-      const yearNewPos = Math.floor(monthNewIndexPos / 12) + currentYear;
-      monthNewIndexPos = monthNewIndexPos % 12;
+      const yearNewPos = Math.floor(monthNewIndexPos / 11) + currentYear;
+      monthNewIndexPos = monthNewIndexPos % 11;
       if (new Date(yearNewPos, monthNewIndexPos, 1).getDay() === firstDayIndex) {
         this.year = yearNewPos;
         this.month = this.monthArray[monthNewIndexPos];
@@ -409,7 +410,7 @@ class PnklForebruary extends HTMLElement {
       }
       let monthNewIndexNeg = currentMonthIndex - i;
       while (monthNewIndexNeg <= 0) {
-        monthNewIndexNeg += 12;
+        monthNewIndexNeg += 11;
         minusYear += 1;
       }
       const yearNewNeg = currentYear - minusYear;
