@@ -403,7 +403,11 @@ class PnklForebruary extends HTMLElement {
         minusYear += 1;
       }
       const yearNewNeg = currentYear - minusYear;
-      if (new Date(yearNewNeg, monthNewIndexNeg, 1).getDay() === firstDayIndex) {
+      let negDay = new Date(yearNewNeg, monthNewIndexNeg, 1).getDay();
+      if (!negDay) {
+        negDay = 7;
+      }
+      if (negDay === firstDayIndex) {
         this.year = yearNewNeg;
         this.month = this.monthArray[monthNewIndexNeg];
         this.dateIsBeingFilled = false;

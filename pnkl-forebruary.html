@@ -395,7 +395,7 @@ class PnklForebruary extends HTMLElement {
     this.dateIsBeingFilled = true;
     const overflowFramePosLeft = parseInt(overflowFrame.style.left);
     const firstDayIndex = 7- Math.floor((overflowFramePosLeft + 14) / 64); // day of the week
-    const currentMonthIndex = this.monthArray.indexOf(this.month) + 1;
+    const currentMonthIndex = this.monthArray.indexOf(this.month);
     const currentYear = +this.year;
     for (let i = 0; i <= 50; i++) { // approximate value
       let monthNewIndexPos = currentMonthIndex + i;
@@ -414,7 +414,11 @@ class PnklForebruary extends HTMLElement {
         minusYear += 1;
       }
       const yearNewNeg = currentYear - minusYear;
-      if (new Date(yearNewNeg, monthNewIndexNeg, 1).getDay() === firstDayIndex) {
+      let negDay = new Date(yearNewNeg, monthNewIndexNeg, 1).getDay();
+      if (!negDay) {
+        negDay = 7;
+      }
+      if (negDay === firstDayIndex) {
         this.year = yearNewNeg;
         this.month = this.monthArray[monthNewIndexNeg];
         this.dateIsBeingFilled = false;
